@@ -4,211 +4,444 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Atlas Auto | USA Car Imports to Oman</title>
+  <meta name="description" content="Atlas Auto helps customers in Oman buy, import, and receive affordable and mid-range vehicles from US auctions." />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+    :root {
+      --bg: #05070d;
+      --bg-soft: #0d1422;
+      --card: #111827;
+      --text: #ffffff;
+      --muted: #cbd5e1;
+      --gold: #facc15;
+      --green: #22c55e;
+      --red: #ef4444;
+      --line: rgba(255,255,255,0.12);
     }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; }
+
     header {
-      padding: 25px 8%;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(5,7,13,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 7%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #020617;
     }
 
-    .logo {
-      font-size: 26px;
-      font-weight: bold;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
       letter-spacing: 1px;
     }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
+    .brand img {
+      width: 120px;
+      height: auto;
+      display: block;
     }
+
+    nav a {
+      text-decoration: none;
+      margin-left: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    nav a:hover { color: var(--text); }
 
     .hero {
-      padding: 90px 8%;
-      background: linear-gradient(135deg, #020617, #1e293b);
-      text-align: left;
+      min-height: 82vh;
+      padding: 80px 7%;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(34,197,94,0.18), transparent 28%),
+        radial-gradient(circle at 20% 10%, rgba(239,68,68,0.13), transparent 24%),
+        linear-gradient(135deg, #030712 0%, #0f172a 55%, #020617 100%);
     }
 
-    .hero h1 {
-      font-size: 52px;
-      margin-bottom: 15px;
+    .hero-logo {
+      max-width: 520px;
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.03;
+      margin: 0 0 20px;
     }
 
     .hero p {
-      font-size: 20px;
-      max-width: 650px;
-      line-height: 1.6;
-      color: #cbd5e1;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.7;
+      max-width: 720px;
+      margin: 0 0 12px;
+    }
+
+    .arabic {
+      direction: rtl;
+      text-align: right;
+      font-size: 20px !important;
+      color: #e5e7eb !important;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
     }
 
     .btn {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 14px 24px;
-      background: #facc15;
-      color: #020617;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border-radius: 10px;
       text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
+      font-weight: 800;
+      border: 1px solid transparent;
     }
 
+    .btn.primary {
+      background: var(--gold);
+      color: #020617;
+    }
+
+    .btn.secondary {
+      border-color: var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .car-visual {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      min-height: 360px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.11), rgba(255,255,255,0.02)),
+        radial-gradient(circle at 50% 40%, rgba(250,204,21,0.16), transparent 40%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .car-shape {
+      width: 82%;
+      height: 150px;
+      position: relative;
+      border-bottom: 12px solid #e5e7eb;
+      border-radius: 70% 45% 20% 20%;
+      transform: translateY(15px);
+    }
+
+    .car-shape::before {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: -80px;
+      width: 48%;
+      height: 90px;
+      border-radius: 100% 100% 8px 8px;
+      border-top: 12px solid #e5e7eb;
+      border-left: 12px solid #e5e7eb;
+      border-right: 12px solid #e5e7eb;
+    }
+
+    .wheel {
+      position: absolute;
+      bottom: -45px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #020617;
+      border: 10px solid #94a3b8;
+    }
+
+    .wheel.one { left: 18%; }
+    .wheel.two { right: 16%; }
+
     section {
-      padding: 60px 8%;
+      padding: 70px 7%;
+    }
+
+    .section-head {
+      max-width: 850px;
+      margin-bottom: 32px;
     }
 
     h2 {
-      font-size: 34px;
-      margin-bottom: 20px;
+      font-size: clamp(30px, 4vw, 44px);
+      margin: 0 0 12px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 0;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
       gap: 20px;
     }
 
     .card {
-      background: #1e293b;
-      padding: 25px;
-      border-radius: 12px;
-      color: #e2e8f0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 26px;
     }
 
     .card h3 {
-      color: white;
-      margin-top: 0;
+      margin: 0 0 10px;
+      font-size: 21px;
     }
 
-    .contact {
-      background: #020617;
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #020617;
+      background: var(--gold);
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .contact-box {
+      background:
+        linear-gradient(135deg, rgba(250,204,21,0.12), rgba(34,197,94,0.08)),
+        #020617;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 34px;
       text-align: center;
+    }
+
+    .contact-box p {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
     }
 
     footer {
-      padding: 25px;
+      padding: 30px 7%;
+      border-top: 1px solid var(--line);
+      color: #94a3b8;
       text-align: center;
       background: #020617;
-      color: #94a3b8;
       font-size: 14px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       header {
         display: block;
         text-align: center;
       }
 
-      nav {
-        margin-top: 15px;
+      .brand { justify-content: center; }
+
+      nav { margin-top: 12px; }
+      nav a { margin: 8px; display: inline-block; }
+
+      .hero, .split {
+        grid-template-columns: 1fr;
       }
 
-      nav a {
-        display: inline-block;
-        margin: 8px;
-      }
-
-      .hero h1 {
-        font-size: 36px;
-      }
+      .hero { padding-top: 50px; }
+      .car-visual { min-height: 260px; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">Atlas Auto</div>
+    <div class="brand">
+      <img src="logo.png" alt="Atlas Auto Logo" />
+    </div>
     <nav>
+      <a href="#services">Services</a>
       <a href="#cars">Cars</a>
-      <a href="#import">Import Service</a>
+      <a href="#import">Import</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <div class="hero">
-    <h1>Import Quality Cars from USA Auctions to Oman</h1>
-    <p>
-      Atlas Auto helps customers source, buy, ship, and receive vehicles from US auctions with clear guidance and transparent support.
-    </p>
-    <a class="btn" href="https://wa.me/968XXXXXXXX" target="_blank">Contact on WhatsApp</a>
-  </div>
+  <main>
+    <section class="hero">
+      <div>
+        <img class="hero-logo" src="logo.png" alt="Atlas Auto" />
+        <span class="badge">USA Car Imports to Oman</span>
+        <h1>Import Your Car from the USA with Confidence</h1>
+        <p>Atlas Auto helps customers in Oman source, buy, ship, and receive affordable and mid-range vehicles from US auctions.</p>
+        <p class="arabic">استورد سيارتك من أمريكا بثقة. نساعدك في البحث، الشراء، الشحن، والمتابعة حتى وصول السيارة إلى سلطنة عمان.</p>
+        <div class="actions">
+          <a class="btn primary" href="https://wa.me/96891113232" target="_blank">WhatsApp Now</a>
+          <a class="btn secondary" href="https://www.instagram.com/atlasauto.om" target="_blank">Instagram</a>
+        </div>
+      </div>
+      <div class="car-visual" aria-label="Car visual">
+        <div class="car-shape">
+          <span class="wheel one"></span>
+          <span class="wheel two"></span>
+        </div>
+      </div>
+    </section>
 
-  <section id="cars">
-    <h2>Available Cars</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Coming Soon</h3>
-        <p>Available vehicles will be listed here with photos, model year, condition, and price.</p>
+    <section id="services">
+      <div class="section-head">
+        <h2>What We Do</h2>
+        <p>We focus on practical, affordable, and mid-range vehicles for customers who want better options from the US market.</p>
       </div>
-      <div class="card">
-        <h3>USA Auction Cars</h3>
-        <p>Selected vehicles from trusted auction platforms based on customer requirements.</p>
+      <div class="cards">
+        <div class="card">
+          <span class="tag">بيع</span>
+          <h3>Ready Cars</h3>
+          <p>Available vehicles will be listed with clear photos, details, condition, and price once stock is ready.</p>
+        </div>
+        <div class="card">
+          <span class="tag">استيراد</span>
+          <h3>Custom Import</h3>
+          <p>Tell us your preferred car, budget, and requirements. We help you search suitable US auction options.</p>
+        </div>
+        <div class="card">
+          <span class="tag">متابعة</span>
+          <h3>Shipping Support</h3>
+          <p>We support the process from purchase coordination until the vehicle reaches Oman.</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Custom Requests</h3>
-        <p>Tell us the car you want and we will help you search for suitable options.</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="import">
-    <h2>Import Service</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>1. Search</h3>
-        <p>We help identify suitable cars based on your budget and preference.</p>
+    <section id="cars">
+      <div class="section-head">
+        <h2>Vehicle Categories</h2>
+        <p class="arabic">نركز على السيارات الاقتصادية والمتوسطة المناسبة للاستخدام اليومي في عمان.</p>
       </div>
-      <div class="card">
-        <h3>2. Purchase</h3>
-        <p>We support the auction purchase process with clear cost visibility.</p>
+      <div class="cards">
+        <div class="card">
+          <h3>Sedan</h3>
+          <p>Daily-use vehicles with practical running costs and good value.</p>
+        </div>
+        <div class="card">
+          <h3>SUV</h3>
+          <p>Family-friendly vehicles suitable for comfort, space, and road use.</p>
+        </div>
+        <div class="card">
+          <h3>Pickup</h3>
+          <p>Useful options for work, business, and personal use.</p>
+        </div>
+        <div class="card">
+          <h3>Hybrid / Electric</h3>
+          <p>Selected modern options based on availability and customer preference.</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>3. Shipping</h3>
-        <p>We arrange shipping coordination from the USA to Oman.</p>
-      </div>
-      <div class="card">
-        <h3>4. Delivery</h3>
-        <p>We guide you until the vehicle reaches Oman.</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <h2>Why Atlas Auto?</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Transparent Process</h3>
-        <p>Clear information before buying, including auction details and expected costs.</p>
+    <section id="import">
+      <div class="section-head">
+        <h2>Import Process</h2>
+        <p>Clear steps from choosing the vehicle to receiving it in Oman.</p>
       </div>
-      <div class="card">
-        <h3>Customer Focused</h3>
-        <p>Support from vehicle selection until arrival.</p>
+      <div class="cards">
+        <div class="card">
+          <h3>1. Requirement</h3>
+          <p>You share your preferred car type, budget, and target condition.</p>
+        </div>
+        <div class="card">
+          <h3>2. Search</h3>
+          <p>We look for suitable options from US auctions and review available details.</p>
+        </div>
+        <div class="card">
+          <h3>3. Purchase</h3>
+          <p>The buying process is coordinated with clear cost visibility before proceeding.</p>
+        </div>
+        <div class="card">
+          <h3>4. Shipping</h3>
+          <p>Shipment is followed until the car arrives in Oman.</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Built for Oman</h3>
-        <p>Focused on customers in Oman looking for reliable US vehicle import support.</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="contact" class="contact">
-    <h2>Contact Atlas Auto</h2>
-    <p>WhatsApp: 968 91113232</p>
-    <p>Instagram: @atlasauto.om</p>
-    <a class="btn" href="https://wa.me/96891113232" target="_blank">Message Us</a>
-  </section>
+    <section>
+      <div class="split">
+        <div class="card">
+          <h2>Why Atlas Auto?</h2>
+          <p>We keep the process simple, transparent, and focused on realistic vehicle options for customers in Oman.</p>
+          <br />
+          <p class="arabic">نحرص على وضوح الخطوات والتكاليف ومتابعة العميل من بداية البحث وحتى وصول السيارة.</p>
+        </div>
+        <div class="card">
+          <h2>Coming Soon</h2>
+          <p>Available cars will be published soon with photos, specifications, and direct WhatsApp inquiry.</p>
+          <br />
+          <p class="arabic">سيتم عرض السيارات المتوفرة قريبًا مع الصور والمواصفات وإمكانية التواصل المباشر عبر الواتساب.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="contact-box">
+        <h2>Contact Atlas Auto</h2>
+        <p>WhatsApp: +968 91113232</p>
+        <p>Instagram: @atlasauto.om</p>
+        <div class="actions" style="justify-content:center;">
+          <a class="btn primary" href="https://wa.me/96891113232" target="_blank">Message on WhatsApp</a>
+          <a class="btn secondary" href="https://www.instagram.com/atlasauto.om" target="_blank">Open Instagram</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    © 2026 Atlas Auto. All rights reserved.
+    © 2026 Atlas Auto. USA vehicle imports to Oman.
   </footer>
 
 </body>
