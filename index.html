@@ -117,6 +117,13 @@
   .seg-btn{padding:11px 18px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-family:var(--body);font-weight:700;font-size:14px;cursor:pointer;transition:.18s;white-space:nowrap;}
   .seg-btn.active{background:var(--accent);color:#0b0c0f;}
   .seg-btn:hover:not(.active){color:var(--text);}
+  .field > label.toggle{display:inline-flex;align-items:center;gap:11px;text-transform:none;letter-spacing:normal;margin-bottom:0;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;}
+  .toggle input{position:absolute;opacity:0;width:0;height:0;}
+  .toggle .track{width:46px;height:26px;border-radius:999px;background:var(--bg);border:1px solid var(--line-strong);position:relative;transition:.2s;flex:none;}
+  .toggle .track::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:.22s;}
+  .toggle input:checked + .track{background:var(--accent);border-color:var(--accent);}
+  .toggle input:checked + .track::after{transform:translateX(20px);background:#0b0c0f;}
+  .toggle input:focus-visible + .track{box-shadow:0 0 0 3px var(--accent-glow);}
   .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
   .field{position:relative;}
   .field input[type=number],.field input[type=text]{width:100%;padding:15px 16px;background:var(--bg);border:1px solid var(--line-strong);border-radius:12px;color:var(--text);font-family:var(--body);font-size:16px;outline:none;transition:border-color .2s;}
@@ -293,6 +300,7 @@
         <div class="calc-tabs">
           <button class="tab active" data-mode="buy" id="tabBuy">Buy Now &middot; &#1588;&#1585;&#1575;&#1569; &#1605;&#1576;&#1575;&#1588;&#1585;</button>
           <button class="tab" data-mode="bid" id="tabBid">Bid Now &middot; &#1605;&#1586;&#1575;&#1610;&#1583;&#1577;</button>
+          <button class="tab" data-mode="ship" id="tabShip">Shipping Only &middot; &#1588;&#1581;&#1606; &#1601;&#1602;&#1591;</button>
         </div>
         <div class="calc-body">
           <div class="calc-row">
@@ -303,23 +311,27 @@
             </div>
           </div>
           <div class="calc-grid">
-            <div class="field">
+            <div class="field" id="fieldPrice">
               <label id="priceLabel">Vehicle Price (USD) &middot; &#1587;&#1593;&#1585; &#1575;&#1604;&#1587;&#1610;&#1575;&#1585;&#1577;</label>
               <input type="number" id="price" inputmode="decimal" placeholder="e.g. 8500" min="0">
+            </div>
+            <div class="field" id="fieldAuction">
+              <label>Auction Fees (USD) &middot; &#1585;&#1587;&#1608;&#1605; &#1575;&#1604;&#1605;&#1586;&#1575;&#1583; <span class="opt">optional</span></label>
+              <input type="number" id="auctionFee" inputmode="decimal" placeholder="e.g. 600" min="0">
             </div>
             <div class="field combo">
               <label>Auction Location &middot; &#1605;&#1608;&#1602;&#1593; &#1575;&#1604;&#1605;&#1586;&#1575;&#1583;</label>
               <input type="text" id="cityInput" placeholder="Search city / location&hellip;" autocomplete="off">
               <div class="combo-list" id="cityList"></div>
             </div>
-            <div class="field">
+            <div class="field" id="fieldSize">
               <label>Vehicle Size &middot; &#1581;&#1580;&#1605; &#1575;&#1604;&#1587;&#1610;&#1575;&#1585;&#1577;</label>
               <div class="seg" id="sizeSeg">
                 <button class="seg-btn active" data-size="small">Small / Standard</button>
                 <button class="seg-btn" data-size="large">Large +$150</button>
               </div>
             </div>
-            <div class="field">
+            <div class="field" id="fieldFuel">
               <label>Fuel Type &middot; &#1606;&#1608;&#1593; &#1575;&#1604;&#1608;&#1602;&#1608;&#1583;</label>
               <div class="seg" id="fuelSeg">
                 <button class="seg-btn active" data-fuel="gas">Gasoline</button>
@@ -336,6 +348,14 @@
             <div class="field">
               <label>Additional Fee (USD) <span class="opt">optional</span></label>
               <input type="number" id="addl" inputmode="decimal" placeholder="0" min="0">
+            </div>
+            <div class="field" id="fieldCustoms">
+              <label>Customs &middot; &#1575;&#1604;&#1580;&#1605;&#1575;&#1585;&#1603; <span class="opt">5% &middot; optional</span></label>
+              <label class="toggle"><input type="checkbox" id="customsChk"><span class="track"></span><span>Apply &middot; &#1578;&#1591;&#1576;&#1610;&#1602;</span></label>
+            </div>
+            <div class="field" id="fieldVat">
+              <label>VAT &middot; &#1575;&#1604;&#1590;&#1585;&#1610;&#1576;&#1577; <span class="opt">5% &middot; optional</span></label>
+              <label class="toggle"><input type="checkbox" id="vatChk"><span class="track"></span><span>Apply &middot; &#1578;&#1591;&#1576;&#1610;&#1602;</span></label>
             </div>
           </div>
 
@@ -412,7 +432,7 @@
 
   var DATA={"copart":{"ABILENE - TX":{"t":425},"ADELANTO - CA":{"c":225},"AKRON - OH":{"n":475},"ALBANY - NY":{"n":250},"ALBANY - NY (Amsterdam Sublot)":{"n":250},"ALBUQUERQUE - NM":{"c":700,"t":700},"ALTOONA - PA":{"n":425},"AMARILLO - TX":{"t":425},"ANCHORAGE - AK":{"c":2650,"w":1850},"ANCHORAGE SOUTH - AK":{"c":2650,"w":1850},"ANDREWS - TX":{"t":450},"ANTELOPE - CA":{"c":350},"APPLETON - WI":{"s":725},"ATLANTA EAST - GA":{"s":300},"ATLANTA NORTH - GA":{"s":300},"ATLANTA NORTH - GA (Jefferson Sublot)":{"s":350},"ATLANTA SOUTH - GA":{"s":300},"ATLANTA WEST - GA":{"s":300},"AUGUSTA - GA":{"s":300},"AUSTIN - TX":{"t":275},"AUSTIN NORTH - TX":{"t":275},"BAKERSFIELD - CA":{"c":250},"BALTIMORE - MD":{"n":300,"v":300},"BALTIMORE - MD (White Marsh)":{"n":300,"v":300},"BALTIMORE EAST - MD":{"n":300,"v":300},"BATON ROUGE - LA":{"s":400},"BILLINGS - MT":{"c":1050,"t":1250,"w":850},"BIRMINGHAM - AL":{"s":375},"BISMARCK - ND":{"n":1300},"BOISE - ID":{"c":750,"w":475},"BUFFALO - NY":{"n":475},"BUFFALO - NY (Alden Sublot)":{"n":500},"CANDIA - NH":{"n":375},"CARTERSVILLE - GA":{"s":300},"CASPER - WY":{"c":1400,"w":1300},"CASPER WEST - WY":{"c":1400,"w":1300},"CEDAR RAPIDS - IA":{"n":625},"CHAMBERSBURG - PA":{"n":375},"CHARLESTON - SC":{"s":225},"CHARLESTON - WV":{"n":500,"v":500},"CHICAGO NORTH - IL":{"n":575},"CHICAGO SOUTH - IL":{"n":575},"CHINA GROVE - NC":{"s":325,"v":300},"CICERO - IN":{"n":575},"CLEVELAND EAST - OH":{"n":475},"CLEVELAND WEST - OH":{"n":475},"CLEWISTON - FL":{"s":350},"COLORADO SPRINGS - CO":{"c":675,"t":700},"COLUMBIA - MO":{"s":600},"COLUMBIA - SC":{"s":200},"COLUMBUS - OH":{"n":450},"CONCORD - NC":{"s":300,"v":275},"COPLAY - PA (Sublot)":{"n":250},"CORPUS CHRISTI - TX":{"t":250},"CRASHEDTOYS ATLANTA":{"s":250},"CRASHEDTOYS DALLAS - TX":{"t":250},"CRASHEDTOYS EAST BETHEL - MN":{"n":600},"CRASHEDTOYS ELDRIDGE - IA":{"n":750},"CRASHEDTOYS SACRAMENTO - CA":{"c":350},"CULPEPER - VA":{"n":375,"v":325},"DALLAS - TX":{"t":275},"DALLAS SOUTH - TX":{"t":275},"DANVILLE - VA":{"s":400,"v":325},"DAVENPORT - IA":{"n":625},"DAYTON - OH":{"n":475},"DENVER - CO":{"c":675,"t":675},"DENVER CENTRAL - CO":{"c":675,"t":675},"DENVER SOUTH - CO":{"c":675,"t":675},"DES MOINES - IA":{"n":625},"DETROIT - MI":{"n":525},"DOTHAN - AL":{"s":350},"DYER - IN":{"s":600},"EARLINGTON - KY":{"s":525},"EL PASO - TX":{"t":450},"EUGENE - OR":{"c":650,"w":375},"EXETER - RI":{"n":325},"FAIRBURN - GA":{"s":300},"FAYETTEVILLE - AR":{"t":475},"FLINT - MI":{"n":550},"FORT WAYNE - IN":{"n":600},"FREDERICKSBURG - VA":{"n":325,"v":300},"FREETOWN - MA":{"n":350},"FREMONT - CA":{"c":350},"FRESNO - CA":{"c":275},"FT. PIERCE - FL":{"s":350},"FT. WORTH - TX":{"t":275},"GASTONIA - NC":{"s":325},"GLASSBORO EAST - NJ":{"n":225},"GLASSBORO WEST - NJ":{"n":225},"GRAHAM - WA":{"c":750,"w":150},"GREER - SC":{"s":275},"GRENADA - MS":{"s":450},"HAMMOND - IN":{"n":600},"HAMPTON - VA":{"n":350,"v":250},"HARRISBURG - PA":{"n":275},"HARTFORD - CT":{"n":275},"HARTFORD SPRINGFIELD - CT":{"n":225},"HAYWARD - CA":{"c":350},"HELENA - MT":{"c":950,"w":750},"HOUSTON - TX":{"t":200},"HOUSTON EAST - TX":{"t":200},"INDIANAPOLIS - IN":{"s":600},"IONIA - MI":{"n":650},"JACKSON - MS":{"s":375},"JACKSONVILLE EAST - FL":{"s":200},"JACKSONVILLE NORTH - FL":{"s":200},"JACKSONVILLE WEST - FL":{"s":200},"KANSAS CITY - KS":{"s":625},"KANSAS CITY EAST":{"s":625},"KINCHELOE - MI":{"n":975},"KNOXVILLE - TN":{"s":375},"LAGRANGE - NC":{"s":350,"v":325},"LANSING - MI":{"n":650},"LAS VEGAS - NV":{"c":325},"LAS VEGAS WEST - NV":{"c":325},"LEXINGTON EAST - KY":{"s":525},"LEXINGTON WEST - KY":{"s":525},"LINCOLN - NE":{"n":625},"LITTLE ROCK - AR":{"s":475},"LONG BEACH - CA":{"c":140},"LONG ISLAND - NY":{"n":250},"LONGVIEW - TX":{"t":275},"LOS ANGELES - CA":{"c":140},"LOUISVILLE - KY":{"s":525},"LUFKIN - TX":{"t":250},"LUMBERTON - NC":{"s":300,"v":300},"LYMAN - ME":{"n":450},"MACON - GA":{"s":250},"MADISON - WI":{"s":675},"MADISON SOUTH - WI":{"s":675},"MARTINEZ - CA":{"c":350},"MCALLEN - TX":{"t":325},"MEBANE - NC":{"s":300,"v":300},"MEMPHIS - TN":{"s":500},"MENTONE - CA":{"c":225},"MIAMI CENTRAL - FL":{"s":350},"MIAMI NORTH - FL":{"s":350},"MIAMI SOUTH - FL":{"s":350},"MILWAUKEE - WI":{"n":650},"MILWAUKEE NORTH - WI":{"n":650},"MILWAUKEE SOUTH - WI":{"n":650},"MINNEAPOLIS - MN":{"s":950,"n":675},"MINNEAPOLIS NORTH - MN":{"s":950,"n":675},"MOBILE - AL":{"s":325},"MOBILE SOUTH - AL":{"s":325},"MOCKSVILLE - NC":{"s":300,"v":300},"MONTGOMERY - AL":{"s":375},"MULBERRY SUBLOT - FL":{"s":300},"NAPA - CA":{"c":450},"NASHVILLE - TN":{"s":425,"v":425},"NEW ORLEANS - LA":{"s":400},"NEWBURGH - NY":{"n":250},"NORTH BOSTON - MA":{"n":325},"NORTH CHARLESTON - SC":{"s":225},"NORTH SEATTLE - WA":{"c":750,"w":225},"OCALA - FL":{"s":300},"OGDEN - UT":{"c":450},"OKLAHOMA CITY - OK":{"t":425},"ORLANDO - FL":{"s":300},"ORLANDO NORTH - FL":{"s":300},"ORLANDO SOUTH - FL":{"s":300},"PASCO - WA":{"c":900,"w":400},"PEORIA - IL":{"n":600},"PHILADELPHIA - PA":{"n":230},"PHILADELPHIA EAST - PA":{"n":230},"PHOENIX - AZ":{"c":300},"PHOENIX NORTH - AZ":{"c":330},"PITTSBURG SOUTH - PA":{"n":425},"PITTSBURGH EAST - PA":{"n":450},"PITTSBURGH NORTH - PA":{"n":450},"PITTSBURGH WEST - PA":{"n":450},"PORTLAND NORTH - OR":{"c":650,"w":275},"PORTLAND SOUTH - OR":{"c":650,"w":275},"PUNTA GORDA - FL":{"s":325},"PUNTA GORDA SOUTH - FL":{"s":325},"RALEIGH - NC":{"s":300,"v":300},"RALEIGH NORTH - NC":{"s":300,"v":300},"RANCHO CUCAMONGA - CA":{"c":190},"RAPID CITY - SD":{"c":1250,"n":1200,"w":1200},"REDDING - CA":{"c":525},"RENO - NV":{"c":500},"RICHMOND - VA":{"n":375,"v":300},"RICHMOND EAST - VA":{"n":375,"v":300},"ROCHESTER - NY":{"n":400},"RUTLAND - VT":{"n":475},"SACRAMENTO - CA":{"c":375},"SALT LAKE CITY - UT":{"c":450},"SAN ANTONIO - TX":{"t":275},"SAN BERNARDINO - CA":{"c":200},"SAN DIEGO - CA":{"c":225},"SAN JOSE - CA":{"c":350},"SAVANNAH - GA":{"s":125},"SCRANTON - PA":{"n":275},"SEAFORD - DE":{"n":300},"SHREVEPORT - LA":{"t":300},"SIKESTON - MO":{"s":600},"SO SACRAMENTO - CA":{"c":375},"SOMERVILLE - NJ":{"n":175},"SOUTH BOSTON - MA":{"n":350},"SOUTHERN ILLINOIS - IL":{"s":575},"SPANAWAY - WA":{"c":725,"w":150},"SPARTANBURG - SC":{"s":300},"SPOKANE - WA":{"c":900,"w":375},"SPRINGFIELD - MO":{"s":600},"ST. CLOUD - MN":{"n":700},"ST. LOUIS - MO":{"s":600},"SUN VALLEY - CA":{"c":200},"SYRACUSE - NY":{"n":325},"TALLAHASSEE - FL":{"s":300},"TAMPA NORTH - FL":{"s":300},"TAMPA SOUTH - FL":{"s":300},"TANNER - AL":{"s":400},"TIFTON - GA":{"s":250},"TRENTON - NJ":{"n":225},"TUCSON - AZ":{"c":375},"TULSA - OK":{"t":475},"VALLEJO - CA":{"c":375},"VAN NUYS - CA":{"c":180},"VINTON - LA":{"t":325},"WACO - TX":{"t":275},"WALTON - KY":{"s":525},"WASHINGTON DC - MD":{"n":300,"v":300},"WAYLAND - MI":{"n":650},"WEST PALM BEACH - FL":{"s":350},"WEST WARREN - MA":{"n":325},"WHEELING - IL":{"n":550},"WICHITA - KS":{"t":475},"WINDHAM - ME":{"n":500},"YORK HAVEN - PA":{"n":275}},"iaai":{"ABILENE - TX":{"t":425},"ACE - PERRIS 2 - CA":{"c":200},"ACE CARSON - CA":{"c":150},"ACE - PERRIS - CA":{"c":200},"AKRON CANTON - OH":{"n":475},"ADESA BIRMINGHAM - AL":{"s":350},"ALBANY - NY":{"n":250},"ALBUQUERQUE - NM":{"c":700,"t":700},"ALTOONA - PA":{"n":425},"AMARILLO - TX":{"t":425},"ANAHEIM - CA":{"c":160},"ANCHORAGE - AK":{"c":2650,"w":1850},"APPLETON - WI":{"s":725},"ASHEVILLE - NC":{"s":325,"v":325},"ASHLAND - KY":{"s":700},"ATLANTA - GA":{"s":300},"ATLANTA EAST - GA":{"s":300},"ATLANTA NORTH - GA":{"s":300},"ATLANTA SOUTH - GA":{"s":300},"ATLANTA WEST - GA":{"s":300},"AUSTIN - TX":{"t":275},"AUSTIN NORTH - TX":{"t":275},"AVENEL - NJ":{"n":150},"BALTIMORE - MD":{"n":300,"v":300},"BATON ROUGE - LA":{"s":400},"BILLINGS - MT":{"c":1050,"t":1250,"w":850},"BIRMINGHAM - AL":{"s":375},"BIRMINGHAM BLENDED SALES - AL":{"s":300},"BOISE - ID":{"c":750,"w":475},"BOSTON-SHIRLEY - MA":{"n":350},"BOWLING GREEN - KY":{"s":550},"BRIDGEPORT - PA":{"n":250},"BUCKHANNON - WV":{"n":500,"v":500},"BUFFALO - NY":{"n":475},"BURLINGTON - VT":{"n":500},"CASPER - WY":{"c":1400,"w":1300},"CENTRAL NEW JERSEY - NJ":{"n":175},"CHARLESTON - SC":{"s":225},"CHARLOTTE - NC":{"s":350,"v":325},"CHATTANOOGA - TN":{"s":425},"CHICAGO NORTH - IL":{"n":575},"CHICAGO SOUTH - IL":{"n":575},"CHICAGO WEST - IL":{"n":525},"CINCINNATI - OH":{"n":450},"CINCINNATI SOUTH - OH":{"n":450},"CLEARWATER - FL":{"s":300},"CLEVELAND - OH":{"n":500},"CLEVELAND - OH (Vermillion North Lot)":{"n":475},"CLEWISTON SUBLOT - FL":{"s":350},"COLORADO SPRINGS - CO":{"c":675,"t":700},"COLTON - CA":{"c":190},"COLUMBIA - SC":{"s":200},"COLUMBUS - OH":{"n":450},"CONCORD - NC":{"s":300,"v":275},"CORPUS CHRISTI - TX":{"t":250},"CULPEPER - VA":{"n":375,"v":325},"DALLAS - TX":{"t":275},"DALLAS / FT. WORTH - TX":{"t":275},"DAVENPORT - IA":{"n":625},"DAYTON - OH":{"n":475},"DENVER - CO":{"c":675,"t":675},"DENVER EAST - CO":{"c":675,"t":675},"DES MOINES - IA":{"n":625},"DETROIT - MI":{"n":525},"DOTHAN - AL":{"s":350},"DUNDALK - MD":{"n":300,"v":300},"EAST BAY - CA":{"c":350},"EL PASO - TX":{"t":450},"ELKTON - MD":{"n":275},"ENGLISHTOWN - NJ":{"n":175},"ERIE - PA":{"n":525},"EUGENE - OR":{"c":650,"w":375},"FARGO - ND":{"n":1100},"FAYETTEVILLE - AR":{"t":475},"FLINT - MI":{"n":550},"FONTANA - CA":{"c":190},"FORT MYERS - FL":{"s":375},"FORT WAYNE - IN":{"n":600},"FORT WORTH NORTH - TX":{"t":275},"FREDERICKSBURG SOUTH - VA":{"n":325,"v":300},"FREMONT - CA":{"c":350},"FRESNO - CA":{"c":275},"FT. PIERCE - FL":{"s":350},"GRAND RAPIDS - MI":{"n":650},"GREENSBORO - NC":{"s":325,"v":325},"GREENVILLE - SC":{"s":325},"GRENADA - MS":{"s":450},"GULF COAST - MS":{"s":325},"HARTFORD SOUTH - CT":{"n":275},"HARTFORD - CT":{"n":275},"HIGH DESERT - CA":{"c":225},"HIGH POINT - NC":{"s":325},"HOUSTON - TX":{"t":200},"HOUSTON NORTH - TX":{"t":200},"HOUSTON SOUTH - TX":{"t":200},"HUNTSVILLE - AL":{"s":375},"INDIANAPOLIS - IN":{"s":600},"INDIANAPOLIS SOUTH - IN":{"s":600},"JACKSON - MS":{"s":375},"JACKSONVILLE - FL":{"s":200},"KANSAS CITY - KS":{"s":625},"KANSAS CITY EAST":{"s":625},"KNOXVILLE - TN":{"s":375},"LAFAYETTE - LA":{"s":375},"LAKE CITY - GA":{"s":325},"LAS VEGAS - NV":{"c":325},"LAUREL - MD":{"n":300},"LEXINGTON - SC":{"s":225},"LINCOLN - IL":{"n":625},"LITTLE ROCK - AR":{"s":475},"LONG ISLAND - NY":{"n":250},"LONGVIEW - TX":{"t":275},"LOS ANGELES - CA":{"c":140},"LOS ANGELES SOUTH - CA":{"c":140},"LOUISVILLE - KY":{"s":525},"LOUISVILLE NORTH - KY":{"s":525},"LUBBOCK - TX":{"t":475},"MACON - GA":{"s":250},"MANCHESTER - NH":{"n":375},"MCALLEN - TX":{"t":325},"MEMPHIS - TN":{"s":500},"METRO - DC":{"n":300,"v":300},"MIAMI - FL":{"s":350},"MIAMI NORTH - FL":{"s":350},"MILWAUKEE - WI":{"n":650},"MINNEAPOLIS / ST. PAUL - MN":{"s":950,"n":675},"MINNEAPOLIS SOUTH - MN":{"s":950,"n":675},"MISSOULA - MT":{"c":1150,"w":700},"MOBILE - AL":{"s":325},"MONTICELLO - NY":{"n":275},"NASHVILLE BLENDED SALES - TN":{"s":425,"v":425},"NASHVILLE - TN":{"s":425,"v":425},"NEW CASTLE - DE":{"n":275},"NEW ORLEANS - LA":{"s":400},"NEW ORLEANS EAST - LA":{"s":400},"NEWBURGH - NY":{"n":250},"NORTH HOLLYWOOD - CA":{"c":180},"NORTH HOLLYWOOD - CA (Santa Clarita)":{"c":200},"NORTHERN VIRGINIA - VA":{"n":325,"v":300},"OKLAHOMA CITY - OK":{"t":425},"OMAHA - NE":{"n":650},"OMAHA SOUTH - NE":{"n":650},"ORLANDO - FL":{"s":300},"ORLANDO NORTH - FL":{"s":300},"PADUCAH - KY":{"s":575},"PENSACOLA - FL":{"s":400},"PERMIAN BASIN - TX":{"t":425},"PHILADELPHIA - PA":{"n":230},"PHOENIX - AZ":{"c":300},"PITTSBURGH - PA":{"n":450},"PITTSBURGH NORTH - PA":{"n":450},"PORT MURRAY - NJ":{"n":225},"PORTAGE - WI":{"n":625},"PORTLAND - OR":{"c":650,"w":250},"PORTLAND GORHAM - ME":{"n":425},"PORTLAND NORTH - OR":{"c":650,"w":275},"PORTLAND SOUTH - OR":{"c":650,"w":275},"PORTLAND WEST - OR":{"c":650,"w":275},"PROVIDENCE - RI":{"n":325},"PROVO - UT":{"c":475},"PULASKI - VA":{"s":450,"v":450},"RALEIGH - NC":{"s":300,"v":300},"RENO - NV":{"c":500},"RICHMOND - VA":{"n":375,"v":300},"RIVERSIDE - CA":{"c":190},"ROANOKE - VA":{"n":425,"v":400},"ROCHESTER - NY":{"n":400},"ROCHESTER WEST - NY":{"n":400},"SACRAMENTO - CA":{"c":375},"SACRAMENTO WEST - CA":{"c":400},"SALT LAKE CITY - UT":{"c":450},"SAN ANTONIO - TX":{"t":275},"SAN ANTONIO SOUTH - TX":{"t":275},"SAN DIEGO - CA":{"c":225},"SANTA CLARITA - CA":{"c":220},"SAVANNAH - GA":{"s":125},"SAYREVILLE - NJ":{"n":160},"SCRANTON - PA":{"n":275},"SEATTLE - WA":{"c":750,"w":150},"SEATTLE SOUTH - WA":{"c":750,"w":150},"SHADY SPRING - WV":{"n":500,"v":500},"SHREVEPORT - LA":{"t":300},"SIOUX FALLS - SD":{"n":1000},"SOUTH BEND - IN":{"n":575},"SOUTHERN NEW JERSEY - NJ":{"n":225},"SPOKANE - WA":{"c":900,"w":375},"SPRINGFIELD - MO":{"s":600},"ST. CLOUD - MN":{"n":700},"ST. LOUIS - IL":{"s":600},"STOCKTON - CA":{"c":350},"SUFFOLK - VA":{"n":350,"v":225},"SYRACUSE - NY":{"n":325},"TAMPA - FL":{"s":300},"TAMPA NORTH - FL":{"s":300},"TAUNTON - MA":{"n":325},"TEMPLETON - MA":{"n":350},"TIDEWATER - VA":{"n":325,"v":240},"TIFTON - GA":{"s":250},"TUCSON - AZ":{"c":375},"TULSA - OK":{"t":475},"WEST PALM BEACH - FL":{"s":350},"WICHITA - KS":{"t":475},"WILMINGTON - NC":{"s":325,"v":325},"YORK SPRINGS - PA":{"n":275}}};
 
-  var state={mode:'buy',auction:'copart',city:null,size:'small',fuel:'gas',cars:4};
+  var state={mode:'buy',auction:'copart',city:null,size:'small',fuel:'gas',cars:4,customs:false,vat:false};
 
   var priceEl=document.getElementById('price');
   var addlEl=document.getElementById('addl');
@@ -420,6 +440,32 @@
   var cityList=document.getElementById('cityList');
   var resultEl=document.getElementById('result');
   var priceLabel=document.getElementById('priceLabel');
+  var fieldPrice=document.getElementById('fieldPrice');
+  var fieldAuction=document.getElementById('fieldAuction');
+  var auctionEl=document.getElementById('auctionFee');
+  var fieldSize=document.getElementById('fieldSize');
+  var fieldFuel=document.getElementById('fieldFuel');
+  var fieldCustoms=document.getElementById('fieldCustoms');
+  var fieldVat=document.getElementById('fieldVat');
+  var customsChk=document.getElementById('customsChk');
+  var vatChk=document.getElementById('vatChk');
+
+  function applyMode(){
+    var ship=state.mode==='ship';
+    fieldPrice.style.display=ship?'none':'';
+    fieldAuction.style.display=state.mode==='buy'?'':'none';
+    fieldSize.style.display=ship?'none':'';
+    fieldFuel.style.display=ship?'none':'';
+    fieldCustoms.style.display=ship?'none':'';
+    fieldVat.style.display=ship?'none':'';
+    if(state.mode==='buy'){
+      priceLabel.innerHTML='Vehicle Price (USD) \u00b7 \u0633\u0639\u0631 \u0627\u0644\u0633\u064a\u0627\u0631\u0629';
+      priceEl.placeholder='e.g. 8500';
+    } else if(state.mode==='bid'){
+      priceLabel.innerHTML='Your max budget to Muscat (USD) \u00b7 \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629';
+      priceEl.placeholder='e.g. 12000';
+    }
+  }
 
   function money(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function omr(n){return n.toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});}
@@ -443,45 +489,80 @@
     var priceVal=parseFloat(priceEl.value);
     var addlVal=parseFloat(addlEl.value)||0;
     if(!route){
-      resultEl.innerHTML='<div class="res-hint">'+
-        '\u0627\u062e\u062a\u0631 \u0645\u0648\u0642\u0639 \u0627\u0644\u0645\u0632\u0627\u062f \u0648\u0623\u062f\u062e\u0644 \u0627\u0644\u0633\u0639\u0631 \u0644\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u062f\u064a\u0631.<br>Select a location and enter a price to see the estimate.</div>';
+      var hint=state.mode==='ship'
+        ? '\u0627\u062e\u062a\u0631 \u0645\u0648\u0642\u0639 \u0627\u0644\u0645\u0632\u0627\u062f \u0644\u0639\u0631\u0636 \u0642\u064a\u0645\u0629 \u0627\u0644\u0634\u062d\u0646.<br>Select an auction location to see the shipping cost.'
+        : '\u0627\u062e\u062a\u0631 \u0645\u0648\u0642\u0639 \u0627\u0644\u0645\u0632\u0627\u062f \u0648\u0623\u062f\u062e\u0644 \u0627\u0644\u0633\u0639\u0631 \u0644\u0639\u0631\u0636 \u0627\u0644\u062a\u0642\u062f\u064a\u0631.<br>Select a location and enter a price to see the estimate.';
+      resultEl.innerHTML='<div class="res-hint">'+hint+'</div>';
       return;
     }
-    var sizeAdd=state.size==='large'?LARGE_ADDON:0;
-    var fuelAdd=state.fuel==='ev'?HYBRID_ADDON:0;
+    var sizeAdd=(state.mode!=='ship'&&state.size==='large')?LARGE_ADDON:0;
+    var fuelAdd=(state.mode!=='ship'&&state.fuel==='ev')?HYBRID_ADDON:0;
     var fixed=route.towing+route.container+US_DEALER+OMAN_FEES+sizeAdd+fuelAdd+addlVal;
 
     var pill='<div class="route-pill">\uD83D\uDE9A Route: <b>'+state.city+'</b> &rarr; <b>'+CT[route.port].name+'</b> port</div>';
 
-    var bd='<table class="bd">';
-    if(state.mode==='buy'){
-      bd+=row('Vehicle price \u00b7 \u0633\u0639\u0631 \u0627\u0644\u0633\u064a\u0627\u0631\u0629', isNaN(priceVal)?0:priceVal);
+    /* shared shipping & clearance rows */
+    function shipRows(){
+      var s='';
+      s+=row('Towing (auction \u2192 port) \u00b7 \u0633\u062d\u0628 \u062f\u0627\u062e\u0644\u064a', route.towing);
+      s+=row('Container share \u00b7 \u062d\u0635\u0629 \u0627\u0644\u062d\u0627\u0648\u064a\u0629 ('+CT[route.port].name+', \u00f7'+Number(state.cars)+')', route.container);
+      s+=row('US dealer fee \u00b7 \u0631\u0633\u0648\u0645 \u0648\u0643\u064a\u0644 \u0623\u0645\u0631\u064a\u0643\u0627', US_DEALER);
+      s+=row('Oman clearance &amp; fees \u00b7 \u062a\u062e\u0644\u064a\u0635 \u0639\u0645\u0627\u0646', OMAN_FEES);
+      if(sizeAdd) s+=row('Large vehicle \u00b7 \u0633\u064a\u0627\u0631\u0629 \u0643\u0628\u064a\u0631\u0629', sizeAdd);
+      if(fuelAdd) s+=row('Hybrid / EV \u00b7 \u0647\u0627\u064a\u0628\u0631\u062f/\u0643\u0647\u0631\u0628\u0627\u0626\u064a', fuelAdd);
+      if(addlVal) s+=row('Additional fee \u00b7 \u0631\u0633\u0648\u0645 \u0625\u0636\u0627\u0641\u064a\u0629', addlVal);
+      return s;
     }
-    bd+=row('Towing (auction \u2192 port) \u00b7 \u0633\u062d\u0628 \u062f\u0627\u062e\u0644\u064a', route.towing);
-    bd+=row('Container share \u00b7 \u062d\u0635\u0629 \u0627\u0644\u062d\u0627\u0648\u064a\u0629 ('+CT[route.port].name+', \u00f7'+Number(state.cars)+')', route.container);
-    bd+=row('US dealer fee \u00b7 \u0631\u0633\u0648\u0645 \u0648\u0643\u064a\u0644 \u0623\u0645\u0631\u064a\u0643\u0627', US_DEALER);
-    bd+=row('Oman clearance &amp; fees \u00b7 \u062a\u062e\u0644\u064a\u0635 \u0639\u0645\u0627\u0646', OMAN_FEES);
-    if(sizeAdd) bd+=row('Large vehicle \u00b7 \u0633\u064a\u0627\u0631\u0629 \u0643\u0628\u064a\u0631\u0629', sizeAdd);
-    if(fuelAdd) bd+=row('Hybrid / EV \u00b7 \u0647\u0627\u064a\u0628\u0631\u062f/\u0643\u0647\u0631\u0628\u0627\u0626\u064a', fuelAdd);
-    if(addlVal) bd+=row('Additional fee \u00b7 \u0631\u0633\u0648\u0645 \u0625\u0636\u0627\u0641\u064a\u0629', addlVal);
+    var CUST_LABEL='Customs 5% \u00b7 \u062c\u0645\u0627\u0631\u0643 5%';
+    var VAT_LABEL='VAT 5% \u00b7 \u0636\u0631\u064a\u0628\u0629 5%';
 
+    var bd='<table class="bd">';
     var top='';
-    if(state.mode==='buy'){
-      var totalUSD=(isNaN(priceVal)?0:priceVal)+fixed;
-      var totalOMR=totalUSD*USD_TO_OMR;
+
+    if(state.mode==='ship'){
+      var shipUSD=fixed;
+      bd+=shipRows();
+      bd+='<tr class="total"><td>Total shipping \u00b7 \u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0634\u062d\u0646</td><td>$'+money(shipUSD)+'</td></tr>';
+      top='<div class="res-top">'+
+        '<div class="res-big"><div class="rl">Shipping Total (USD)</div><div class="rv">$'+money(shipUSD)+'</div></div>'+
+        '<div class="res-big"><div class="rl">Shipping (OMR) \u00b7 \u0631\u064a\u0627\u0644 \u0639\u0645\u0627\u0646\u064a</div><div class="rv">'+omr(shipUSD*USD_TO_OMR)+' <small>OMR</small></div></div>'+
+        '</div>';
+    } else if(state.mode==='buy'){
+      var priceP=isNaN(priceVal)?0:priceVal;
+      var aFee=parseFloat(auctionEl.value)||0;
+      var carTotal=priceP+aFee;
+      var customsVal=state.customs?carTotal*0.05:0;
+      var vatVal=state.vat?(carTotal+fixed+customsVal)*0.05:0;
+      bd+=row('Vehicle price \u00b7 \u0633\u0639\u0631 \u0627\u0644\u0633\u064a\u0627\u0631\u0629', priceP);
+      if(aFee) bd+=row('Auction fees \u00b7 \u0631\u0633\u0648\u0645 \u0627\u0644\u0645\u0632\u0627\u062f', aFee);
+      bd+=shipRows();
+      if(state.customs) bd+=row(CUST_LABEL, customsVal);
+      if(state.vat) bd+=row(VAT_LABEL, vatVal);
+      var totalUSD=carTotal+fixed+customsVal+vatVal;
       bd+='<tr class="total"><td>Total to Muscat \u00b7 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a</td><td>$'+money(totalUSD)+'</td></tr>';
       top='<div class="res-top">'+
         '<div class="res-big"><div class="rl">Total (USD)</div><div class="rv">$'+money(totalUSD)+'</div></div>'+
-        '<div class="res-big"><div class="rl">Total (OMR) \u00b7 \u0631\u064a\u0627\u0644 \u0639\u0645\u0627\u0646\u064a</div><div class="rv">'+omr(totalOMR)+' <small>OMR</small></div></div>'+
+        '<div class="res-big"><div class="rl">Total (OMR) \u00b7 \u0631\u064a\u0627\u0644 \u0639\u0645\u0627\u0646\u064a</div><div class="rv">'+omr(totalUSD*USD_TO_OMR)+' <small>OMR</small></div></div>'+
         '</div>';
     } else {
+      /* bid: solve max car price P so budget = P + fixed + customs(P) + vat(P) */
       var budget=isNaN(priceVal)?0:priceVal;
-      var maxBid=budget-fixed;
+      var F=fixed, P;
+      if(state.customs && state.vat){ P=(budget-1.05*F)/1.1025; }
+      else if(state.customs){ P=(budget-F)/1.05; }
+      else if(state.vat){ P=(budget/1.05)-F; }
+      else { P=budget-F; }
+      var maxBid=Math.max(P,0);
+      var customsVal=state.customs?maxBid*0.05:0;
+      var vatVal=state.vat?(maxBid+F+customsVal)*0.05:0;
+      bd+=shipRows();
+      if(state.customs) bd+=row(CUST_LABEL, customsVal);
+      if(state.vat) bd+=row(VAT_LABEL, vatVal);
+      bd+='<tr class="total"><td>Total fixed costs \u00b7 \u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u062a\u0643\u0627\u0644\u064a\u0641</td><td>$'+money(F+customsVal+vatVal)+'</td></tr>';
       var warn='';
-      if(budget>0 && maxBid<0){warn='<div class="res-warn">\u26a0\ufe0f \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629 \u0623\u0642\u0644 \u0645\u0646 \u0627\u0644\u062a\u0643\u0627\u0644\u064a\u0641 \u0627\u0644\u062b\u0627\u0628\u062a\u0629 \u2014 \u0627\u0631\u0641\u0639 \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629. / Budget is below fixed costs.</div>';}
-      bd+='<tr class="total"><td>Total fixed costs \u00b7 \u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u062a\u0643\u0627\u0644\u064a\u0641</td><td>$'+money(fixed)+'</td></tr>';
+      if(budget>0 && P<0){warn='<div class="res-warn">\u26a0\ufe0f \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629 \u0623\u0642\u0644 \u0645\u0646 \u0627\u0644\u062a\u0643\u0627\u0644\u064a\u0641 \u0627\u0644\u062b\u0627\u0628\u062a\u0629 \u2014 \u0627\u0631\u0641\u0639 \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629. / Budget is below fixed costs.</div>';}
       top='<div class="res-top">'+
-        '<div class="res-big"><div class="rl">Max bid in US auction \u00b7 \u0623\u0642\u0635\u0649 \u0645\u0632\u0627\u064a\u062f\u0629</div><div class="rv">$'+money(Math.max(maxBid,0))+'</div></div>'+
+        '<div class="res-big"><div class="rl">Max bid in US auction \u00b7 \u0623\u0642\u0635\u0649 \u0645\u0632\u0627\u064a\u062f\u0629</div><div class="rv">$'+money(maxBid)+'</div></div>'+
         '<div class="res-big"><div class="rl">Your budget (OMR)</div><div class="rv">'+omr(budget*USD_TO_OMR)+' <small>OMR</small></div></div>'+
         '</div>'+warn;
     }
@@ -495,10 +576,7 @@
       document.querySelectorAll('.calc-tabs .tab').forEach(function(x){x.classList.remove('active');});
       t.classList.add('active');
       state.mode=t.getAttribute('data-mode');
-      priceLabel.innerHTML=state.mode==='buy'
-        ? 'Vehicle Price (USD) \u00b7 \u0633\u0639\u0631 \u0627\u0644\u0633\u064a\u0627\u0631\u0629'
-        : 'Your max budget to Muscat (USD) \u00b7 \u0627\u0644\u0645\u064a\u0632\u0627\u0646\u064a\u0629';
-      priceEl.placeholder=state.mode==='buy'?'e.g. 8500':'e.g. 12000';
+      applyMode();
       render();
     });
   });
@@ -550,7 +628,11 @@
 
   priceEl.addEventListener('input',render);
   addlEl.addEventListener('input',render);
+  auctionEl.addEventListener('input',render);
+  customsChk.addEventListener('change',function(){state.customs=customsChk.checked;render();});
+  vatChk.addEventListener('change',function(){state.vat=vatChk.checked;render();});
 
+  applyMode();
   render();
 </script>
 </body>
