@@ -1,16 +1,215 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Atlas Auto</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas Auto | USA Car Imports to Oman</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      padding: 25px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #020617;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 90px 8%;
+      background: linear-gradient(135deg, #020617, #1e293b);
+      text-align: left;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 650px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 14px 24px;
+      background: #facc15;
+      color: #020617;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+
+    section {
+      padding: 60px 8%;
+    }
+
+    h2 {
+      font-size: 34px;
+      margin-bottom: 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 12px;
+      color: #e2e8f0;
+    }
+
+    .card h3 {
+      color: white;
+      margin-top: 0;
+    }
+
+    .contact {
+      background: #020617;
+      text-align: center;
+    }
+
+    footer {
+      padding: 25px;
+      text-align: center;
+      background: #020617;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        display: block;
+        text-align: center;
+      }
+
+      nav {
+        margin-top: 15px;
+      }
+
+      nav a {
+        display: inline-block;
+        margin: 8px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+    }
+  </style>
 </head>
-<body style="font-family:Arial;text-align:center;padding:50px;">
-    <h1>Atlas Auto</h1>
-    <p>Importing Quality Vehicles from USA Auctions</p>
+<body>
 
-    <h2>Contact Us</h2>
+  <header>
+    <div class="logo">Atlas Auto</div>
+    <nav>
+      <a href="#cars">Cars</a>
+      <a href="#import">Import Service</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-    <p>WhatsApp: +968XXXXXXXX</p>
+  <div class="hero">
+    <h1>Import Quality Cars from USA Auctions to Oman</h1>
+    <p>
+      Atlas Auto helps customers source, buy, ship, and receive vehicles from US auctions with clear guidance and transparent support.
+    </p>
+    <a class="btn" href="https://wa.me/968XXXXXXXX" target="_blank">Contact on WhatsApp</a>
+  </div>
 
+  <section id="cars">
+    <h2>Available Cars</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Coming Soon</h3>
+        <p>Available vehicles will be listed here with photos, model year, condition, and price.</p>
+      </div>
+      <div class="card">
+        <h3>USA Auction Cars</h3>
+        <p>Selected vehicles from trusted auction platforms based on customer requirements.</p>
+      </div>
+      <div class="card">
+        <h3>Custom Requests</h3>
+        <p>Tell us the car you want and we will help you search for suitable options.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="import">
+    <h2>Import Service</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>1. Search</h3>
+        <p>We help identify suitable cars based on your budget and preference.</p>
+      </div>
+      <div class="card">
+        <h3>2. Purchase</h3>
+        <p>We support the auction purchase process with clear cost visibility.</p>
+      </div>
+      <div class="card">
+        <h3>3. Shipping</h3>
+        <p>We arrange shipping coordination from the USA to Oman.</p>
+      </div>
+      <div class="card">
+        <h3>4. Delivery</h3>
+        <p>We guide you until the vehicle reaches Oman.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why Atlas Auto?</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Transparent Process</h3>
+        <p>Clear information before buying, including auction details and expected costs.</p>
+      </div>
+      <div class="card">
+        <h3>Customer Focused</h3>
+        <p>Support from vehicle selection until arrival.</p>
+      </div>
+      <div class="card">
+        <h3>Built for Oman</h3>
+        <p>Focused on customers in Oman looking for reliable US vehicle import support.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact Atlas Auto</h2>
+    <p>WhatsApp: 968 91113232</p>
     <p>Instagram: @atlasauto.om</p>
+    <a class="btn" href="https://wa.me/96891113232" target="_blank">Message Us</a>
+  </section>
+
+  <footer>
+    © 2026 Atlas Auto. All rights reserved.
+  </footer>
+
 </body>
 </html>
